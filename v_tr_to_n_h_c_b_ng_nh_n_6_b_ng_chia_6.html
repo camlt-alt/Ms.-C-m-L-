@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Vũ Trụ Toán Học - Bảng Nhân 6 & Bảng Chia 6</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            dark: '#0B1120',
+                            card: '#1E293B',
+                            lightCard: '#334155',
+                            accent: '#38BDF8',
+                            purple: '#A855F7',
+                            gold: '#F59E0B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Animated Starry Background */
+        .stars-bg {
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #38bdf8, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #a855f7, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: stars 10s linear infinite;
+        }
+
+        @keyframes stars {
+            0% { background-position: 0 0; }
+            100% { background-position: 200px 200px; }
+        }
+
+        /* Card Glow & Shake Animations */
+        .glow-blue {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
+        }
+        .glow-purple {
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.35);
+        }
+        .glow-green {
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+        }
+
+        .animate-shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        .animate-pop {
+            animation: pop 0.3s ease-out forwards;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        /* Drag & Drop Styles */
+        .draggable-source {
+            touch-action: none;
+            cursor: grab;
+        }
+        .draggable-source:active {
+            cursor: grabbing;
+        }
+        .drop-target {
+            transition: all 0.2s ease;
+        }
+        .drop-target.drag-over {
+            border-color: #38bdf8;
+            background-color: rgba(56, 189, 248, 0.2);
+            transform: scale(1.05);
+        }
+        .selected-item {
+            ring: 4px solid #38bdf8;
+            border-color: #38bdf8;
+            animation: pulse-ring 1s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(56, 189, 248, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+        }
+    </style>
+</head>
+<body class="stars-bg flex flex-col min-h-screen text-slate-100 overflow-x-hidden">
+
+    <!-- Top Header -->
+    <header class="w-full bg-slate-900/80 backdrop-blur border-b border-slate-700/60 sticky top-0 z-40 px-4 py-3 shadow-lg">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.goHome()">
+                <span class="text-3xl md:text-4xl animate-bounce">🚀</span>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-purple-400">
+                        VŨ TRỤ TOÁN HỌC
+                    </h1>
+                    <p class="text-xs md:text-sm text-slate-300 font-medium">Bảng nhân 6 – Bảng chia 6</p>
+                </div>
+            </div>
+
+            <!-- Header Controls & Stats -->
+            <div class="flex items-center space-x-2 md:space-x-4">
+                <div id="header-streak-badge" class="hidden items-center bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1 rounded-full text-xs md:text-sm font-bold">
+                    🔥 <span id="header-streak-count">0</span>
+                </div>
+                <div id="header-score-badge" class="hidden items-center bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 px-3 py-1 rounded-full text-xs md:text-sm font-bold">
+                    ⭐ <span id="header-score-count">0</span>
+                </div>
+                <button onclick="app.openTeacherModal()" class="bg-indigo-600/80 hover:bg-indigo-500 text-indigo-100 border border-indigo-400/30 px-3 py-1.5 rounded-xl text-xs md:text-sm font-semibold transition flex items-center space-x-1.5 active:scale-95 shadow">
+                    <span>👩‍🏫</span>
+                    <span class="hidden sm:inline">Giáo viên</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow flex flex-col items-center justify-center p-3 sm:p-6 max-w-5xl mx-auto w-full">
+
+        <!-- VIEW 1: LEVEL SELECTION PAGE -->
+        <section id="view-home" class="w-full max-w-4xl space-y-8 my-auto py-6 animate-pop">
+            <div class="text-center space-y-3">
+                <div class="inline-flex items-center space-x-2 bg-slate-800/80 border border-slate-700 px-4 py-1.5 rounded-full text-sky-400 text-sm font-semibold">
+                    <span>✨</span>
+                    <span>Chào mừng Thám Tử Nhí Đến Với Vũ Trụ Toán Học!</span>
+                    <span>⭐</span>
+                </div>
+                <h2 class="text-3xl md:text-5xl font-black tracking-tight text-white">
+                    Hôm nay em muốn chinh phục mức độ nào?
+                </h2>
+                <p class="text-slate-300 text-base md:text-lg max-w-xl mx-auto">
+                    Hãy chọn thử thách phù hợp để rèn luyện siêu năng lực tính nhẩm Bảng 6 ngay nhé!
+                </p>
+            </div>
+
+            <!-- Level Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                <!-- Level 1: Trung bình -->
+                <div onclick="app.selectLevel('medium')" class="group relative bg-slate-800/90 hover:bg-slate-800 border-2 border-emerald-500/40 hover:border-emerald-400 rounded-3xl p-6 transition-all duration-300 cursor-pointer hover:-translate-y-2 hover:shadow-2xl hover:glow-green flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="bg-emerald-500/20 text-emerald-300 font-extrabold text-xs uppercase tracking-wider px-3 py-1 rounded-full border border-emerald-500/40">🟢 Mức 1</span>
+                            <span class="text-3xl">🌱</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white group-hover:text-emerald-300 transition">TRUNG BÌNH</h3>
+                            <p class="text-slate-300 text-sm mt-2 leading-relaxed">
+                                Luyện tập phép tính cơ bản trực tiếp trong Bảng nhân 6 và Bảng chia 6. Có hỗ trợ gợi ý nhẹ nhàng.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-700/60 flex items-center justify-between text-emerald-400 font-bold text-sm">
+                        <span>Bắt đầu ngay</span>
+                        <span class="text-lg group-hover:translate-x-1 transition">➔</span>
+                    </div>
+                </div>
+
+                <!-- Level 2: Khá -->
+                <div onclick="app.selectLevel('hard')" class="group relative bg-slate-800/90 hover:bg-slate-800 border-2 border-sky-500/40 hover:border-sky-400 rounded-3xl p-6 transition-all duration-300 cursor-pointer hover:-translate-y-2 hover:shadow-2xl hover:glow-blue flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="bg-sky-500/20 text-sky-300 font-extrabold text-xs uppercase tracking-wider px-3 py-1 rounded-full border border-sky-500/40">🔵 Mức 2</span>
+                            <span class="text-3xl">🚀</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white group-hover:text-sky-300 transition">KHÁ</h3>
+                            <p class="text-slate-300 text-sm mt-2 leading-relaxed">
+                                Trộn lẫn phép nhân - chia, điền số còn thiếu, so sánh kết quả và bài toán thực tế 1 bước.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-700/60 flex items-center justify-between text-sky-400 font-bold text-sm">
+                        <span>Sẵn sàng thử sức</span>
+                        <span class="text-lg group-hover:translate-x-1 transition">➔</span>
+                    </div>
+                </div>
+
+                <!-- Level 3: Giỏi -->
+                <div onclick="app.selectLevel('excellent')" class="group relative bg-slate-800/90 hover:bg-slate-800 border-2 border-purple-500/40 hover:border-purple-400 rounded-3xl p-6 transition-all duration-300 cursor-pointer hover:-translate-y-2 hover:shadow-2xl hover:glow-purple flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="bg-purple-500/20 text-purple-300 font-extrabold text-xs uppercase tracking-wider px-3 py-1 rounded-full border border-purple-500/40">🟣 Mức 3</span>
+                            <span class="text-3xl">👑</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white group-hover:text-purple-300 transition">GIỎI</h3>
+                            <p class="text-slate-300 text-sm mt-2 leading-relaxed">
+                                Đỉnh cao suy luận! Bài toán lời văn nhiều bước, tìm thành phần ẩn, thách đấu tư duy logic.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-700/60 flex items-center justify-between text-purple-400 font-bold text-sm">
+                        <span>Chinh phục ngay</span>
+                        <span class="text-lg group-hover:translate-x-1 transition">➔</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overview Feature Badges -->
+            <div class="flex flex-wrap justify-center gap-4 text-xs font-medium text-slate-400 pt-4">
+                <div class="flex items-center space-x-1.5 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700">
+                    <span>⚡ Tính nhẩm nhanh</span>
+                </div>
+                <div class="flex items-center space-x-1.5 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700">
+                    <span>🔢 Điền ô trống</span>
+                </div>
+                <div class="flex items-center space-x-1.5 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700">
+                    <span>🎯 Kéo thả tương tác</span>
+                </div>
+                <div class="flex items-center space-x-1.5 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700">
+                    <span>🕵️ Thám tử tìm phép đúng</span>
+                </div>
+                <div class="flex items-center space-x-1.5 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700">
+                    <span>🏆 Siêu toán thực tế</span>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- VIEW 2: QUIZ WORKSPACE PAGE -->
+        <section id="view-quiz" class="w-full hidden flex-col space-y-4 my-auto">
+            
+            <!-- Type Tabs Navigation -->
+            <div class="flex items-center justify-between bg-slate-800/90 border border-slate-700 p-2 rounded-2xl overflow-x-auto gap-1">
+                <button onclick="app.filterType('all')" id="tab-all" class="quiz-type-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap transition bg-blue-600 text-white">
+                    🌟 Tất Cả Dạng
+                </button>
+                <button onclick="app.filterType('speed')" id="tab-speed" class="quiz-type-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap transition text-slate-300 hover:bg-slate-700">
+                    ⚡ Tính Nhẩm
+                </button>
+                <button onclick="app.filterType('missing')" id="tab-missing" class="quiz-type-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap transition text-slate-300 hover:bg-slate-700">
+                    🔢 Điền Số
+                </button>
+                <button onclick="app.filterType('drag')" id="tab-drag" class="quiz-type-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap transition text-slate-300 hover:bg-slate-700">
+                    🎯 Kéo Thả
+                </button>
+                <button onclick="app.filterType('detect')" id="tab-detect" class="quiz-type-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap transition text-slate-300 hover:bg-slate-700">
+                    🕵️ Tìm Đúng
+                </button>
+                <button onclick="app.filterType('word')" id="tab-word" class="quiz-type-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap transition text-slate-300 hover:bg-slate-700">
+                    🏆 Thách Đấu
+                </button>
+            </div>
+
+            <!-- Quiz Top Bar (Progress & Info) -->
+            <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-3 w-full md:w-auto">
+                    <button onclick="app.goHome()" class="p-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-slate-300 text-xs font-bold transition flex items-center space-x-1">
+                        <span>🏠</span>
+                        <span>Trang chủ</span>
+                    </button>
+                    <div id="level-indicator" class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">
+                        <!-- Level badge inserted dynamically -->
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full md:w-1/2 space-y-1">
+                    <div class="flex justify-between text-xs font-bold text-slate-300">
+                        <span id="progress-text">Câu 1 / 10</span>
+                        <span id="progress-percent">10%</span>
+                    </div>
+                    <div class="w-full bg-slate-900 rounded-full h-3.5 p-0.5 border border-slate-700 overflow-hidden">
+                        <div id="progress-fill" class="bg-gradient-to-r from-blue-500 via-sky-400 to-emerald-400 h-full rounded-full transition-all duration-500 w-0"></div>
+                    </div>
+                </div>
+
+                <!-- Stats summary -->
+                <div class="flex items-center space-x-3 text-xs md:text-sm font-bold">
+                    <div class="text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-xl">
+                        Đúng: <span id="quiz-correct-count">0</span>
+                    </div>
+                    <div class="text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-xl">
+                        Điểm: <span id="quiz-score-count">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Card Area -->
+            <div id="question-card" class="bg-slate-800/90 border-2 border-slate-700/80 rounded-3xl p-6 md:p-8 shadow-2xl relative min-h-[380px] flex flex-col justify-between">
+                
+                <!-- Category Tag Header -->
+                <div class="flex items-center justify-between mb-4">
+                    <span id="type-badge" class="bg-slate-700/70 border border-slate-600 text-sky-300 px-3 py-1 rounded-lg text-xs md:text-sm font-bold flex items-center space-x-1.5">
+                        <!-- Type badge text dynamically populated -->
+                    </span>
+
+                    <button onclick="app.showHint()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center space-x-1.5 active:scale-95">
+                        <span>💡</span>
+                        <span>GỢI Ý</span>
+                    </button>
+                </div>
+
+                <!-- Question Main Display Area -->
+                <div id="question-body" class="my-auto py-4 text-center space-y-6">
+                    <!-- Dynamic math question content rendered here -->
+                </div>
+
+                <!-- Hint Alert Box (Hidden initially) -->
+                <div id="hint-box" class="hidden mt-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 text-amber-200 text-sm font-medium animate-pop flex items-start space-x-3">
+                    <span class="text-xl">💡</span>
+                    <div>
+                        <span class="font-bold block text-amber-300 mb-0.5">Gợi ý cho em:</span>
+                        <span id="hint-text">Gợi ý câu hỏi...</span>
+                    </div>
+                </div>
+
+                <!-- Feedback Banner Area -->
+                <div id="feedback-box" class="hidden mt-4 p-4 rounded-2xl text-center font-bold text-lg animate-pop">
+                    <!-- Dynamic feedback popup (Correct/Wrong/Explanation) -->
+                </div>
+
+                <!-- Footer Navigation Buttons -->
+                <div class="mt-6 pt-4 border-t border-slate-700/60 flex justify-between items-center">
+                    <span class="text-xs text-slate-400 font-medium">Bấm chọn hoặc kéo thả đáp án đúng</span>
+                    <button id="btn-next-question" onclick="app.nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-2.5 rounded-2xl transition shadow-lg flex items-center space-x-2 active:scale-95 animate-bounce">
+                        <span>Câu Tiếp Theo</span>
+                        <span>➔</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: COMPLETION CELEBRATION MODAL -->
+        <div id="modal-completion" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-slate-800 border-2 border-slate-700 rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center space-y-6 shadow-2xl animate-pop relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 text-8xl opacity-10 pointer-events-none">🏆</div>
+                
+                <div class="space-y-2">
+                    <div id="completion-emoji" class="text-6xl md:text-7xl mb-2 animate-bounce">🎉</div>
+                    <h2 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-sky-300 to-purple-300">
+                        HOÀN THÀNH THỬ THÁCH!
+                    </h2>
+                    <p id="completion-subtitle" class="text-slate-300 text-sm md:text-base font-medium">
+                        Bạn đã hoàn thành bộ câu hỏi Bảng Nhân 6 – Bảng Chia 6!
+                    </p>
+                </div>
+
+                <!-- Score Board Box -->
+                <div class="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-5 space-y-4">
+                    <div id="rank-badge" class="inline-block px-4 py-1.5 rounded-full text-sm font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                        🌟 Siêu Sao Toán Học
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800">
+                        <div class="p-2">
+                            <span class="text-xs text-slate-400 font-medium block">Tổng Điểm</span>
+                            <span id="final-score" class="text-xl md:text-2xl font-black text-amber-400">100</span>
+                        </div>
+                        <div class="p-2 border-x border-slate-800">
+                            <span class="text-xs text-slate-400 font-medium block">Số Câu Đúng</span>
+                            <span id="final-correct" class="text-xl md:text-2xl font-black text-emerald-400">10/10</span>
+                        </div>
+                        <div class="p-2">
+                            <span class="text-xs text-slate-400 font-medium block">Chuỗi Đúng</span>
+                            <span id="final-streak" class="text-xl md:text-2xl font-black text-sky-400">🔥 10</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-2 gap-4 pt-2">
+                    <button onclick="app.restartLevel()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-2xl transition shadow-lg active:scale-95 flex items-center justify-center space-x-2">
+                        <span>🔄</span>
+                        <span>LÀM LẠI</span>
+                    </button>
+                    <button onclick="app.goHome()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-3 px-4 rounded-2xl transition border border-slate-600 active:scale-95 flex items-center justify-center space-x-2">
+                        <span>🏠</span>
+                        <span>TRANG CHỦ</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 4: TEACHER DASHBOARD MODAL -->
+        <div id="modal-teacher" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-slate-800 border-2 border-indigo-500/40 rounded-3xl p-6 md:p-8 max-w-2xl w-full space-y-6 shadow-2xl animate-pop relative">
+                <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-3xl">👩‍🏫</span>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">BẢNG THỐNG KÊ DÀNH CHO GIÁO VIÊN</h3>
+                            <p class="text-xs text-slate-400">Theo dõi chi tiết kết quả luyện tập của học sinh</p>
+                        </div>
+                    </div>
+                    <button onclick="app.closeTeacherModal()" class="text-slate-400 hover:text-white text-2xl font-bold px-2">✕</button>
+                </div>
+
+                <div id="teacher-stats-content" class="space-y-4">
+                    <!-- Overview Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="bg-slate-900 p-3 rounded-2xl border border-slate-700 text-center">
+                            <span class="text-xs text-slate-400 block">Đã trả lời</span>
+                            <span id="teacher-total-answered" class="text-xl font-black text-sky-400">0</span>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded-2xl border border-slate-700 text-center">
+                            <span class="text-xs text-slate-400 block">Số câu đúng</span>
+                            <span id="teacher-total-correct" class="text-xl font-black text-emerald-400">0</span>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded-2xl border border-slate-700 text-center">
+                            <span class="text-xs text-slate-400 block">Tỷ lệ chính xác</span>
+                            <span id="teacher-accuracy" class="text-xl font-black text-amber-400">0%</span>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded-2xl border border-slate-700 text-center">
+                            <span class="text-xs text-slate-400 block">Mức độ hiện tại</span>
+                            <span id="teacher-current-level" class="text-xs font-black text-purple-400 uppercase">Chưa chọn</span>
+                        </div>
+                    </div>
+
+                    <!-- Details Table / Summary -->
+                    <div class="bg-slate-900/80 border border-slate-700 rounded-2xl p-4 text-xs md:text-sm space-y-2">
+                        <h4 class="font-bold text-slate-300 border-b border-slate-800 pb-2">Ghi chú chuyên môn:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-400">
+                            <li>Ứng dụng tự động trộn thứ tự câu hỏi và thứ tự các lựa chọn đáp án.</li>
+                            <li>Hỗ trợ kéo thả trên chuột và cảm ứng một chạm (tap-to-select).</li>
+                            <li>Dữ liệu câu hỏi gồm đầy đủ 5 dạng bài chuẩn hóa theo SGK Toán Lớp 3.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-2">
+                    <button onclick="app.closeTeacherModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-2.5 rounded-2xl text-sm transition">
+                        Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer Banner -->
+    <footer class="w-full bg-slate-900/60 border-t border-slate-800/80 py-3 text-center text-xs text-slate-400">
+        🚀 Ứng dụng Học tập Tương tác Bảng 6 - Thiết kế cho Học sinh Lớp 3 & Giáo viên Tiểu học
+    </footer>
+
+    <script>
+        /* ==========================================================================
+           1. QUESTION BANK DATA STRUCTURE (Standardized 3rd Grade Math Curriculum)
+           ========================================================================== */
+        const QUESTION_BANK = {
+            // 🟢 TRUNG BÌNH: Direct calculations, simple missing numbers
+            medium: [
+                {
+                    id: 'm1',
+                    level: 'medium',
+                    type: 'speed',
+                    typeName: '⚡ Tính Nhẩm Nhanh',
+                    question: '6 × 4 = ?',
+                    options: [18, 24, 30, 36],
+                    answer: 24,
+                    hint: 'Em hãy lấy 6 cộng với chính nó 4 lần, hoặc đếm nhẩm 6, 12, 18...',
+                    explanation: 'Theo bảng nhân 6: 6 × 4 = 24.'
+                },
+                {
+                    id: 'm2',
+                    level: 'medium',
+                    type: 'speed',
+                    typeName: '⚡ Tính Nhẩm Nhanh',
+                    question: '18 : 6 = ?',
+                    options: [2, 3, 4, 5],
+                    answer: 3,
+                    hint: 'Số nào nhân với 6 thì bằng 18?',
+                    explanation: 'Vì 6 × 3 = 18 nên 18 : 6 = 3.'
+                },
+                {
+                    id: 'm3',
+                    level: 'medium',
+                    type: 'missing',
+                    typeName: '🔢 Điền Số Còn Thiếu',
+                    question: '6 × □ = 30',
+                    options: [4, 5, 6, 7],
+                    answer: 5,
+                    hint: 'Hãy đếm cách 6 từ 6 đến 30 xem có mấy lần.',
+                    explanation: '6 × 5 = 30, vậy số cần điền là 5.'
+                },
+                {
+                    id: 'm4',
+                    level: 'medium',
+                    type: 'missing',
+                    typeName: '🔢 Điền Số Còn Thiếu',
+                    question: '36 : 6 = □',
+                    options: [5, 6, 7, 8],
+                    answer: 6,
+                    hint: 'Tìm thừa số còn thiếu trong phép nhân: 6 × ? = 36.',
+                    explanation: '36 : 6 = 6.'
+                },
+                {
+                    id: 'm5',
+                    level: 'medium',
+                    type: 'drag',
+                    typeName: '🎯 Kéo Thả Phép Tính',
+                    question: '6 × 8 = □',
+                    options: [42, 48, 54, 56],
+                    answer: 48,
+                    hint: 'Em nhớ lại phép tính 6 × 7 = 42, cộng thêm 6 nữa nhé.',
+                    explanation: '6 × 8 = 48.'
+                },
+                {
+                    id: 'm6',
+                    level: 'medium',
+                    type: 'drag',
+                    typeName: '🎯 Kéo Thả Phép Tính',
+                    question: '42 : 6 = □',
+                    options: [6, 7, 8, 9],
+                    answer: 7,
+                    hint: 'Mấy nhân với 6 bằng 42 nhỉ?',
+                    explanation: '42 : 6 = 7.'
+                },
+                {
+                    id: 'm7',
+                    level: 'medium',
+                    type: 'detect',
+                    typeName: '🕵️ Tìm Phép Tính Đúng',
+                    question: 'Phép tính nào sau đây có kết quả ĐÚNG?',
+                    options: ['6 × 7 = 36', '6 × 7 = 42', '6 × 7 = 48', '6 × 7 = 54'],
+                    answer: '6 × 7 = 42',
+                    hint: '6 nhân 7 bằng bốn mươi mấy?',
+                    explanation: 'Chính xác! 6 × 7 = 42.'
+                },
+                {
+                    id: 'm8',
+                    level: 'medium',
+                    type: 'speed',
+                    typeName: '⚡ Tính Nhẩm Nhanh',
+                    question: '6 × 9 = ?',
+                    options: [48, 52, 54, 60],
+                    answer: 54,
+                    hint: 'Lấy 60 trừ đi 6 là ra kết quả của 6 × 9.',
+                    explanation: '6 × 9 = 54.'
+                },
+                {
+                    id: 'm9',
+                    level: 'medium',
+                    type: 'word',
+                    typeName: '🏆 Bài Toán Thực Tế',
+                    question: 'Có 6 túi kẹo, mỗi túi có 5 viên kẹo. Hỏi có tất cả bao nhiêu viên kẹo?',
+                    options: [25, 30, 35, 36],
+                    answer: 30,
+                    hint: 'Muốn tìm tất cả viên kẹo, em lấy số viên trong 1 túi nhân với số túi (5 × 6 hoặc 6 × 5).',
+                    explanation: 'Số viên kẹo có tất cả là: 6 × 5 = 30 (viên).'
+                },
+                {
+                    id: 'm10',
+                    level: 'medium',
+                    type: 'speed',
+                    typeName: '⚡ Tính Nhẩm Nhanh',
+                    question: '54 : 6 = ?',
+                    options: [7, 8, 9, 10],
+                    answer: 9,
+                    hint: '6 nhân với mấy thì được 54?',
+                    explanation: '54 : 6 = 9.'
+                }
+            ],
+
+            // 🔵 KHÁ: Mixed multiplication/division, blank shifting, comparisons, 1-step word problems
+            hard: [
+                {
+                    id: 'h1',
+                    level: 'hard',
+                    type: 'missing',
+                    typeName: '🔢 Điền Số Còn Thiếu',
+                    question: '□ × 6 = 48',
+                    options: [6, 7, 8, 9],
+                    answer: 8,
+                    hint: 'Muốn tìm thừa số chưa biết, em lấy tích 48 chia cho thừa số đã biết là 6.',
+                    explanation: '48 : 6 = 8, vậy ô trống điền số 8.'
+                },
+                {
+                    id: 'h2',
+                    level: 'hard',
+                    type: 'missing',
+                    typeName: '🔢 Điền Số Còn Thiếu',
+                    question: '54 : □ = 9',
+                    options: [5, 6, 7, 8],
+                    answer: 6,
+                    hint: 'Muốn tìm số chia, em lấy số bị chia 54 chia cho thương 9.',
+                    explanation: '54 : 9 = 6, vậy ô trống là số 6.'
+                },
+                {
+                    id: 'h3',
+                    level: 'hard',
+                    type: 'detect',
+                    typeName: '🕵️ Phép Tính Lớn Nhất',
+                    question: 'Phép tính nào sau đây có KẾT QUẢ LỚN NHẤT?',
+                    options: ['6 × 4', '6 × 7', '6 × 5', '6 × 3'],
+                    answer: '6 × 7',
+                    hint: 'Trong các thừa số nhân với 6, thừa số nào lớn nhất thì tích đó lớn nhất.',
+                    explanation: '6 × 7 = 42 là kết quả lớn nhất trong các phương án.'
+                },
+                {
+                    id: 'h4',
+                    level: 'hard',
+                    type: 'detect',
+                    typeName: '🕵️ Tìm Phép Tính Đúng',
+                    question: 'Phép tính nào có KẾT QUẢ BẰNG 36?',
+                    options: ['6 × 5', '6 × 6', '42 : 6', '48 : 6'],
+                    answer: '6 × 6',
+                    hint: 'Hãy tính nhẩm kết quả từng phép tính: 6×5=30, 6×6=36...',
+                    explanation: '6 × 6 = 36.'
+                },
+                {
+                    id: 'h5',
+                    level: 'hard',
+                    type: 'word',
+                    typeName: '🏆 Thách Đấu Thực Tế',
+                    question: 'Có 6 hộp bút, mỗi hộp có 6 chiếc bút. Hỏi có tất cả bao nhiêu chiếc bút?',
+                    options: [12, 30, 36, 42],
+                    answer: 36,
+                    hint: 'Lấy số chiếc bút trong 1 hộp nhân với số hộp: 6 × 6.',
+                    explanation: 'Tổng số chiếc bút là: 6 × 6 = 36 (chiếc).'
+                },
+                {
+                    id: 'h6',
+                    level: 'hard',
+                    type: 'word',
+                    typeName: '🏆 Thách Đấu Thực Tế',
+                    question: 'Có 48 chiếc bánh được chia đều vào 6 hộp. Hỏi mỗi hộp có bao nhiêu chiếc bánh?',
+                    options: [6, 7, 8, 9],
+                    answer: 8,
+                    hint: 'Chia đều 48 chiếc bánh vào 6 hộp tức là thực hiện phép chia 48 : 6.',
+                    explanation: 'Mỗi hộp có số chiếc bánh là: 48 : 6 = 8 (chiếc).'
+                },
+                {
+                    id: 'h7',
+                    level: 'hard',
+                    type: 'drag',
+                    typeName: '🎯 Kéo Thả Phép Tính',
+                    question: '6 × 7 ... 40 (Điền dấu thích hợp)',
+                    options: ['>', '<', '='],
+                    answer: '>',
+                    hint: 'Tính 6 × 7 = ? rồi so sánh với số 40.',
+                    explanation: '6 × 7 = 42. Vì 42 > 40 nên chọn dấu >.'
+                },
+                {
+                    id: 'h8',
+                    level: 'hard',
+                    type: 'missing',
+                    typeName: '🔢 Điền Số Còn Thiếu',
+                    question: '□ : 6 = 8',
+                    options: [42, 48, 54, 60],
+                    answer: 48,
+                    hint: 'Muốn tìm số bị chia chưa biết, em lấy thương 8 nhân với số chia 6.',
+                    explanation: '8 × 6 = 48, vậy số cần điền là 48.'
+                },
+                {
+                    id: 'h9',
+                    level: 'hard',
+                    type: 'speed',
+                    typeName: '⚡ Tính Nhẩm Nhanh',
+                    question: 'Tính: 6 × 6 + 10 = ?',
+                    options: [36, 42, 46, 50],
+                    answer: 46,
+                    hint: 'Thực hiện phép nhân 6 × 6 trước, sau đó cộng thêm 10.',
+                    explanation: '6 × 6 = 36; 36 + 10 = 46.'
+                },
+                {
+                    id: 'h10',
+                    level: 'hard',
+                    type: 'speed',
+                    typeName: '⚡ Tính Nhẩm Nhanh',
+                    question: 'Tính: 60 : 6 - 4 = ?',
+                    options: [4, 5, 6, 10],
+                    answer: 6,
+                    hint: 'Thực hiện phép chia 60 : 6 trước, rồi lấy kết quả trừ 4.',
+                    explanation: '60 : 6 = 10; 10 - 4 = 6.'
+                }
+            ],
+
+            // 🟣 GIỎI: Advanced reasoning, dual missing numbers, multi-step word problems
+            excellent: [
+                {
+                    id: 'e1',
+                    level: 'excellent',
+                    type: 'word',
+                    typeName: '🏆 Suy Luận Siêu Toán',
+                    question: 'Một số khi chia cho 6 thì được thương là 8. Hỏi số đó là bao nhiêu?',
+                    options: [42, 48, 54, 14],
+                    answer: 48,
+                    hint: 'Gọi số đó là X. Ta có X : 6 = 8. Vậy X = 8 × 6.',
+                    explanation: 'Số cần tìm là: 8 × 6 = 48.'
+                },
+                {
+                    id: 'e2',
+                    level: 'excellent',
+                    type: 'word',
+                    typeName: '🏆 Bài Toán Nhiều Bước',
+                    question: 'Có 6 hộp, mỗi hộp có 9 chiếc bút. Số bút đó đem chia đều cho 3 bạn. Hỏi mỗi bạn nhận được bao nhiêu chiếc bút?',
+                    options: [18, 27, 12, 15],
+                    answer: 18,
+                    hint: 'Bước 1: Tính tổng số bút (6 × 9). Bước 2: Lấy tổng số bút chia cho 3 bạn.',
+                    explanation: 'Tổng số bút là: 6 × 9 = 54 (chiếc). Mỗi bạn nhận được: 54 : 3 = 18 (chiếc).'
+                },
+                {
+                    id: 'e3',
+                    level: 'excellent',
+                    type: 'word',
+                    typeName: '🏆 Bài Toán Nhiều Bước',
+                    question: 'Có 6 hộp kẹo, mỗi hộp có 8 viên. Cô giáo đã chia cho các bạn 6 viên kẹo. Hỏi còn lại bao nhiêu viên kẹo?',
+                    options: [42, 48, 54, 40],
+                    answer: 42,
+                    hint: 'Bước 1: Tính tổng số kẹo ban đầu (6 × 8). Bước 2: Trừ đi 6 viên đã chia.',
+                    explanation: 'Số kẹo ban đầu: 6 × 8 = 48 viên. Số kẹo còn lại: 48 - 6 = 42 (viên).'
+                },
+                {
+                    id: 'e4',
+                    level: 'excellent',
+                    type: 'missing',
+                    typeName: '🔢 Biến Đổi Đẳng Thức',
+                    question: 'Điền số thích hợp: 6 × 4 = □ × 3',
+                    options: [6, 7, 8, 9],
+                    answer: 8,
+                    hint: 'Bước 1: Tính vế trái 6 × 4 = 24. Bước 2: Tìm số nhân với 3 để bằng 24.',
+                    explanation: 'Vì 6 × 4 = 24, mà 24 = 8 × 3 nên số cần điền là 8.'
+                },
+                {
+                    id: 'e5',
+                    level: 'excellent',
+                    type: 'word',
+                    typeName: '🏆 Bài Toán Thực Tế',
+                    question: 'Một lớp học có 6 nhóm, mỗi nhóm có cùng số học sinh. Cả lớp có tất cả 36 học sinh. Hỏi mỗi nhóm có bao nhiêu học sinh?',
+                    options: [5, 6, 7, 8],
+                    answer: 6,
+                    hint: 'Lấy tổng số học sinh chia cho số nhóm: 36 : 6.',
+                    explanation: 'Mỗi nhóm có số học sinh là: 36 : 6 = 6 (học sinh).'
+                },
+                {
+                    id: 'e6',
+                    level: 'excellent',
+                    type: 'detect',
+                    typeName: '🕵️ Thám Tử So Sánh',
+                    question: 'Phép tính nào sau đây có kết quả NHỎ HƠN kết quả của 6 × 5?',
+                    options: ['6 × 6', '42 : 6', '6 × 7', '54 : 6'],
+                    answer: '42 : 6',
+                    hint: 'Tính 6 × 5 = 30. Sau đó tính từng đáp án xem đáp án nào nhỏ hơn 30.',
+                    explanation: '6 × 5 = 30. Ta có 42 : 6 = 7. Vì 7 < 30 nên 42 : 6 nhỏ hơn.'
+                },
+                {
+                    id: 'e7',
+                    level: 'excellent',
+                    type: 'word',
+                    typeName: '🏆 Bài Toán Thực Tế',
+                    question: 'Mẹ mua 6 túi cam, mỗi túi có 6 quả. Sau đó mẹ mua thêm 4 quả nữa. Hỏi mẹ có tất cả bao nhiêu quả cam?',
+                    options: [36, 40, 42, 44],
+                    answer: 40,
+                    hint: 'Tính số cam trong 6 túi trước (6 × 6), sau đó cộng thêm 4 quả.',
+                    explanation: '6 túi cam có: 6 × 6 = 36 quả. Tất cả có: 36 + 4 = 40 (quả cam).'
+                },
+                {
+                    id: 'e8',
+                    level: 'excellent',
+                    type: 'drag',
+                    typeName: '🎯 Kéo Thả Phức Hợp',
+                    question: 'Tính giá trị biểu thức: 6 × 9 - 14 = □',
+                    options: [30, 40, 50, 54],
+                    answer: 40,
+                    hint: 'Thực hiện phép nhân 6 × 9 trước (bằng 54), rồi trừ đi 14.',
+                    explanation: '6 × 9 = 54; 54 - 14 = 40.'
+                },
+                {
+                    id: 'e9',
+                    level: 'excellent',
+                    type: 'word',
+                    typeName: '🏆 Suy Luận Chia Đều',
+                    question: 'Bố có 54 cái kẹo chia đều cho 6 người con. Mỗi người con lại cho bạn 2 cái. Hỏi mỗi người con còn lại bao nhiêu cái kẹo?',
+                    options: [7, 8, 9, 10],
+                    answer: 7,
+                    hint: 'Bước 1: Tính số kẹo mỗi con nhận được (54 : 6 = 9). Bước 2: Trừ đi 2 cái đã cho bạn.',
+                    explanation: 'Mỗi người con ban đầu nhận: 54 : 6 = 9 cái. Mỗi con còn lại: 9 - 2 = 7 (cái kẹo).'
+                },
+                {
+                    id: 'e10',
+                    level: 'excellent',
+                    type: 'missing',
+                    typeName: '🔢 Điền Số Hai Bước',
+                    question: '□ : 6 + 5 = 11',
+                    options: [30, 36, 42, 48],
+                    answer: 36,
+                    hint: 'Coi (□ : 6) là số hạng chưa biết. Ta có □ : 6 = 11 - 5 = 6. Tìm □.',
+                    explanation: '□ : 6 = 11 - 5 = 6. Do đó □ = 6 × 6 = 36.'
+                }
+            ]
+        };
+
+        /* ==========================================================================
+           2. WEB AUDIO SYNTHESIZER SOUND ENGINE (100% Offline Compatible)
+           ========================================================================== */
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) {
+                        this.ctx = new AudioContext();
+                    }
+                }
+            }
+
+            playCorrect() {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+
+                const osc1 = this.ctx.createOscillator();
+                const osc2 = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc1.type = 'sine';
+                osc2.type = 'triangle';
+
+                // Play arpeggio chord (C5 -> E5 -> G5)
+                osc1.frequency.setValueAtTime(523.25, now);
+                osc1.frequency.setValueAtTime(659.25, now + 0.08);
+                osc1.frequency.setValueAtTime(783.99, now + 0.16);
+
+                osc2.frequency.setValueAtTime(261.63, now);
+                osc2.frequency.setValueAtTime(329.63, now + 0.08);
+                osc2.frequency.setValueAtTime(392.00, now + 0.16);
+
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc1.start(now);
+                osc2.start(now);
+                osc1.stop(now + 0.35);
+                osc2.stop(now + 0.35);
+            }
+
+            playWrong() {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.25);
+
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+
+            playClick() {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.05);
+            }
+
+            playFanfare() {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+                    gain.gain.setValueAtTime(0.15, now + idx * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + idx * 0.1);
+                    osc.stop(now + idx * 0.1 + 0.3);
+                });
+            }
+        }
+
+        /* ==========================================================================
+           3. APPLICATION CORE LOGIC
+           ========================================================================== */
+        class MathApp {
+            constructor() {
+                this.sound = new SoundEngine();
+                this.currentLevel = null;
+                this.selectedType = 'all';
+                this.questionList = [];
+                this.currentIndex = 0;
+                this.score = 0;
+                this.correctCount = 0;
+                this.streak = 0;
+                this.maxStreak = 0;
+                this.hasAnsweredCurrent = false;
+
+                // Drag/Touch interaction state
+                this.selectedOptionValue = null;
+
+                // Teacher tracking stats
+                this.stats = {
+                    totalAnswered: 0,
+                    totalCorrect: 0
+                };
+            }
+
+            // Utilities: Shuffle array in place
+            shuffle(array) {
+                const arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            goHome() {
+                this.sound.playClick();
+                document.getElementById('view-quiz').classList.add('hidden');
+                document.getElementById('view-home').classList.remove('hidden');
+                document.getElementById('modal-completion').classList.add('hidden');
+                document.getElementById('header-score-badge').classList.add('hidden');
+                document.getElementById('header-streak-badge').classList.add('hidden');
+            }
+
+            selectLevel(levelKey) {
+                this.sound.playClick();
+                this.currentLevel = levelKey;
+                this.selectedType = 'all';
+                this.resetQuizState();
+                this.prepareQuestions();
+                this.showQuizView();
+            }
+
+            filterType(typeKey) {
+                this.sound.playClick();
+                this.selectedType = typeKey;
+
+                // Update active tab styles
+                document.querySelectorAll('.quiz-type-tab').forEach(tab => {
+                    tab.classList.remove('bg-blue-600', 'text-white');
+                    tab.classList.add('text-slate-300', 'hover:bg-slate-700');
+                });
+                
+                const activeTab = document.getElementById(`tab-${typeKey}`);
+                if (activeTab) {
+                    activeTab.classList.remove('text-slate-300', 'hover:bg-slate-700');
+                    activeTab.classList.add('bg-blue-600', 'text-white');
+                }
+
+                this.resetQuizState();
+                this.prepareQuestions();
+                this.showQuizView();
+            }
+
+            resetQuizState() {
+                this.currentIndex = 0;
+                this.score = 0;
+                this.correctCount = 0;
+                this.streak = 0;
+                this.maxStreak = 0;
+                this.updateHeaderStats();
+            }
+
+            prepareQuestions() {
+                let pool = QUESTION_BANK[this.currentLevel] || [];
+                
+                // Filter by type if not 'all'
+                if (this.selectedType !== 'all') {
+                    pool = pool.filter(q => q.type === this.selectedType);
+                }
+
+                if (pool.length === 0) {
+                    // Fallback to all in this level if filter has no items
+                    pool = QUESTION_BANK[this.currentLevel];
+                }
+
+                // Deep copy and shuffle questions & options
+                this.questionList = this.shuffle(pool).map(q => {
+                    return {
+                        ...q,
+                        shuffledOptions: this.shuffle(q.options)
+                    };
+                });
+            }
+
+            showQuizView() {
+                document.getElementById('view-home').classList.add('hidden');
+                document.getElementById('view-quiz').classList.remove('hidden');
+                document.getElementById('header-score-badge').classList.remove('hidden');
+                document.getElementById('header-streak-badge').classList.remove('hidden');
+
+                // Render indicator level badge
+                const indicator = document.getElementById('level-indicator');
+                if (this.currentLevel === 'medium') {
+                    indicator.className = 'px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+                    indicator.innerText = '🟢 Trung Bình';
+                } else if (this.currentLevel === 'hard') {
+                    indicator.className = 'px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-500/40';
+                    indicator.innerText = '🔵 Khá';
+                } else {
+                    indicator.className = 'px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40';
+                    indicator.innerText = '🟣 Giỏi';
+                }
+
+                this.renderCurrentQuestion();
+            }
+
+            renderCurrentQuestion() {
+                this.hasAnsweredCurrent = false;
+                this.selectedOptionValue = null;
+
+                // Hide feedback and hint
+                document.getElementById('hint-box').classList.add('hidden');
+                document.getElementById('feedback-box').classList.add('hidden');
+                document.getElementById('btn-next-question').classList.add('hidden');
+
+                const q = this.questionList[this.currentIndex];
+                
+                // Update Progress UI
+                const total = this.questionList.length;
+                const currentNum = this.currentIndex + 1;
+                const percent = Math.round((currentNum / total) * 100);
+
+                document.getElementById('progress-text').innerText = `Câu ${currentNum} / ${total}`;
+                document.getElementById('progress-percent').innerText = `${percent}%`;
+                document.getElementById('progress-fill').style.width = `${percent}%`;
+
+                document.getElementById('quiz-correct-count').innerText = this.correctCount;
+                document.getElementById('quiz-score-count').innerText = this.score;
+
+                // Badge & Question Title
+                document.getElementById('type-badge').innerText = q.typeName;
+
+                const body = document.getElementById('question-body');
+                body.innerHTML = '';
+
+                // Render based on Exercise Format
+                if (q.type === 'drag') {
+                    this.renderDragAndDropQuestion(body, q);
+                } else if (q.type === 'missing') {
+                    this.renderMissingNumberQuestion(body, q);
+                } else if (q.type === 'word') {
+                    this.renderWordProblemQuestion(body, q);
+                } else {
+                    // Default / Speed / Detect Multiple Choice
+                    this.renderMultipleChoiceQuestion(body, q);
+                }
+            }
+
+            // DẠNG 1 & DẠNG 4: Multiple Choice (Big Buttons)
+            renderMultipleChoiceQuestion(container, q) {
+                const questionText = document.createElement('h3');
+                questionText.className = 'text-2xl md:text-4xl font-extrabold text-white tracking-wide mb-6 leading-snug';
+                questionText.innerText = q.question;
+                container.appendChild(questionText);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto w-full';
+
+                q.shuffledOptions.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'quiz-opt-btn bg-slate-700/80 hover:bg-slate-600 border-2 border-slate-600 hover:border-sky-400 text-white font-black text-xl md:text-2xl py-4 px-6 rounded-2xl transition shadow-lg active:scale-95 flex items-center justify-center';
+                    btn.innerText = opt;
+                    btn.onclick = () => this.handleAnswer(opt, btn);
+                    optionsGrid.appendChild(btn);
+                });
+
+                container.appendChild(optionsGrid);
+            }
+
+            // DẠNG 2: Điền Số Còn Thiếu
+            renderMissingNumberQuestion(container, q) {
+                const questionText = document.createElement('div');
+                questionText.className = 'text-3xl md:text-5xl font-black text-amber-300 tracking-wider mb-8 bg-slate-900/60 p-6 rounded-3xl border border-slate-700/80 inline-block shadow-inner';
+                questionText.innerText = q.question;
+                container.appendChild(questionText);
+
+                const label = document.createElement('p');
+                label.className = 'text-sm font-semibold text-slate-300 mb-4';
+                label.innerText = 'Chọn số đúng để điền vào ô trống □:';
+                container.appendChild(label);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'flex flex-wrap justify-center gap-4 max-w-xl mx-auto';
+
+                q.shuffledOptions.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'quiz-opt-btn w-16 h-16 md:w-20 md:h-20 bg-slate-700/90 hover:bg-sky-600 border-2 border-slate-500 hover:border-sky-300 text-white font-black text-2xl md:text-3xl rounded-2xl transition shadow-lg active:scale-95 flex items-center justify-center';
+                    btn.innerText = opt;
+                    btn.onclick = () => this.handleAnswer(opt, btn);
+                    optionsGrid.appendChild(btn);
+                });
+
+                container.appendChild(optionsGrid);
+            }
+
+            // DẠNG 3: Interactive Drag & Drop (With Touch Tap Fallback)
+            renderDragAndDropQuestion(container, q) {
+                const prompt = document.createElement('div');
+                prompt.className = 'text-xl md:text-2xl font-bold text-slate-200 mb-6';
+                prompt.innerText = 'Kéo đáp án đúng (hoặc chạm để chọn) rồi thả vào ô trống:';
+                container.appendChild(prompt);
+
+                // Math Equation Box with Drop Target Slot
+                const eqBox = document.createElement('div');
+                eqBox.className = 'flex items-center justify-center space-x-3 text-3xl md:text-5xl font-black text-white bg-slate-900/80 p-6 rounded-3xl border border-slate-700 shadow-inner max-w-lg mx-auto mb-8';
+
+                const parts = q.question.split('□');
+                const part1 = document.createElement('span');
+                part1.innerText = parts[0] || '';
+                eqBox.appendChild(part1);
+
+                // Drop Target Zone
+                const dropTarget = document.createElement('div');
+                dropTarget.id = 'drop-target-box';
+                dropTarget.className = 'drop-target min-w-[80px] md:min-w-[100px] h-16 md:h-20 border-4 border-dashed border-sky-400/80 rounded-2xl bg-sky-500/10 flex items-center justify-center text-3xl md:text-4xl font-extrabold text-sky-300 shadow-md cursor-pointer';
+                dropTarget.innerText = '?';
+
+                // Setup Native HTML5 Drag Over / Drop Listeners
+                dropTarget.ondragover = (e) => {
+                    e.preventDefault();
+                    dropTarget.classList.add('drag-over');
+                };
+                dropTarget.ondragleave = () => dropTarget.classList.remove('drag-over');
+                dropTarget.ondrop = (e) => {
+                    e.preventDefault();
+                    dropTarget.classList.remove('drag-over');
+                    const val = e.dataTransfer.getData('text/plain');
+                    if (val) {
+                        this.handleAnswer(isNaN(val) ? val : Number(val), dropTarget);
+                    }
+                };
+
+                // Setup Touch/Tap Click Fallback for Drop Zone
+                dropTarget.onclick = () => {
+                    if (this.selectedOptionValue !== null && !this.hasAnsweredCurrent) {
+                        this.handleAnswer(this.selectedOptionValue, dropTarget);
+                    }
+                };
+
+                eqBox.appendChild(dropTarget);
+
+                if (parts[1]) {
+                    const part2 = document.createElement('span');
+                    part2.innerText = parts[1];
+                    eqBox.appendChild(part2);
+                }
+
+                container.appendChild(eqBox);
+
+                // Source Option Tiles
+                const sourcesContainer = document.createElement('div');
+                sourcesContainer.className = 'flex flex-wrap justify-center gap-4';
+
+                q.shuffledOptions.forEach(opt => {
+                    const tile = document.createElement('div');
+                    tile.className = 'draggable-source w-16 h-16 md:w-20 md:h-20 bg-gradient-to-b from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-2 border-sky-300 text-white font-black text-2xl md:text-3xl rounded-2xl shadow-lg flex items-center justify-center transition transform active:scale-95';
+                    tile.innerText = opt;
+                    tile.draggable = true;
+
+                    // Native HTML dragstart
+                    tile.ondragstart = (e) => {
+                        e.dataTransfer.setData('text/plain', opt.toString());
+                        this.sound.playClick();
+                    };
+
+                    // Touch Tap selection
+                    tile.onclick = () => {
+                        this.sound.playClick();
+                        document.querySelectorAll('.draggable-source').forEach(t => t.classList.remove('selected-item'));
+                        tile.classList.add('selected-item');
+                        this.selectedOptionValue = opt;
+                    };
+
+                    sourcesContainer.appendChild(tile);
+                });
+
+                container.appendChild(sourcesContainer);
+            }
+
+            // DẠNG 5: Thách Đấu Bài Toán Thực Tế (Word Problem)
+            renderWordProblemQuestion(container, q) {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900/90 border border-slate-700/80 p-6 md:p-8 rounded-3xl text-left max-w-2xl mx-auto mb-6 shadow-xl space-y-4';
+
+                const iconHeader = document.createElement('div');
+                iconHeader.className = 'flex items-center space-x-2 text-amber-400 font-bold text-sm';
+                iconHeader.innerHTML = '<span>📖 Bài toán suy luận:</span>';
+                card.appendChild(iconHeader);
+
+                const problemText = document.createElement('p');
+                problemText.className = 'text-lg md:text-2xl font-bold text-white leading-relaxed';
+                problemText.innerText = q.question;
+                card.appendChild(problemText);
+
+                container.appendChild(card);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'grid grid-cols-2 gap-4 max-w-xl mx-auto';
+
+                q.shuffledOptions.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'quiz-opt-btn bg-slate-700/80 hover:bg-purple-600 border-2 border-slate-600 hover:border-purple-300 text-white font-black text-xl md:text-2xl py-4 px-6 rounded-2xl transition shadow-lg active:scale-95 flex items-center justify-center';
+                    btn.innerText = isNaN(opt) ? opt : `${opt}`;
+                    btn.onclick = () => this.handleAnswer(opt, btn);
+                    optionsGrid.appendChild(btn);
+                });
+
+                container.appendChild(optionsGrid);
+            }
+
+            handleAnswer(selectedAnswer, element) {
+                if (this.hasAnsweredCurrent) return;
+
+                const q = this.questionList[this.currentIndex];
+                this.stats.totalAnswered++;
+
+                const feedbackBox = document.getElementById('feedback-box');
+                feedbackBox.classList.remove('hidden', 'bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300', 'bg-red-500/20', 'border-red-500/40', 'text-red-300', 'animate-shake');
+
+                // Check correctness
+                const isCorrect = String(selectedAnswer).trim().toLowerCase() === String(q.answer).trim().toLowerCase();
+
+                if (isCorrect) {
+                    this.hasAnsweredCurrent = true;
+                    this.sound.playCorrect();
+
+                    this.score += 10;
+                    this.correctCount++;
+                    this.streak++;
+                    if (this.streak > this.maxStreak) this.maxStreak = this.streak;
+                    this.stats.totalCorrect++;
+
+                    this.updateHeaderStats();
+
+                    // Visual feedback
+                    if (element) {
+                        element.classList.add('bg-emerald-600', 'border-emerald-300', 'glow-green');
+                        if (q.type === 'drag') {
+                            element.innerText = q.answer;
+                        }
+                    }
+
+                    feedbackBox.className = 'mt-4 p-4 rounded-2xl text-center font-bold text-base md:text-lg animate-pop bg-emerald-500/20 border-2 border-emerald-500/40 text-emerald-300 flex flex-col items-center justify-center space-y-1';
+                    feedbackBox.innerHTML = `
+                        <div class="flex items-center space-x-2 text-xl md:text-2xl">
+                            <span>🎉 CHÍNH XÁC! RẤT GIỎI!</span>
+                            <span>⭐</span>
+                        </div>
+                        <p class="text-xs md:text-sm font-medium text-emerald-200">${q.explanation}</p>
+                    `;
+
+                    // Auto advance after 1.4 seconds or click next
+                    document.getElementById('btn-next-question').classList.remove('hidden');
+                    setTimeout(() => {
+                        if (this.hasAnsweredCurrent && !document.getElementById('view-quiz').classList.contains('hidden')) {
+                            this.nextQuestion();
+                        }
+                    }, 1400);
+
+                } else {
+                    this.sound.playWrong();
+                    this.streak = 0;
+                    this.updateHeaderStats();
+
+                    if (element) {
+                        element.classList.add('bg-red-600/80', 'border-red-400', 'animate-shake');
+                    }
+
+                    feedbackBox.className = 'mt-4 p-4 rounded-2xl text-center font-bold text-base md:text-lg animate-pop animate-shake bg-red-500/20 border-2 border-red-500/40 text-red-300 flex flex-col items-center justify-center space-y-1';
+                    feedbackBox.innerHTML = `
+                        <div class="flex items-center space-x-2 text-xl">
+                            <span>💡 CHƯA ĐÚNG RỒI! HÃY THỬ LẠI NHÉ.</span>
+                        </div>
+                        <p class="text-xs md:text-sm font-medium text-red-200">Em bấm nút "GỢI Ý" phía trên nếu cần trợ giúp nhé!</p>
+                    `;
+                }
+            }
+
+            showHint() {
+                this.sound.playClick();
+                const q = this.questionList[this.currentIndex];
+                const hintBox = document.getElementById('hint-box');
+                document.getElementById('hint-text').innerText = q.hint;
+                hintBox.classList.remove('hidden');
+            }
+
+            nextQuestion() {
+                this.sound.playClick();
+                if (this.currentIndex < this.questionList.length - 1) {
+                    this.currentIndex++;
+                    this.renderCurrentQuestion();
+                } else {
+                    this.finishQuiz();
+                }
+            }
+
+            updateHeaderStats() {
+                document.getElementById('header-streak-count').innerText = this.streak;
+                document.getElementById('header-score-count').innerText = this.score;
+
+                const streakBadge = document.getElementById('header-streak-badge');
+                if (this.streak >= 2) {
+                    streakBadge.classList.remove('hidden');
+                    streakBadge.classList.add('flex');
+                } else {
+                    streakBadge.classList.add('hidden');
+                    streakBadge.classList.remove('flex');
+                }
+            }
+
+            finishQuiz() {
+                this.sound.playFanfare();
+                
+                const total = this.questionList.length;
+                const scorePercent = Math.round((this.correctCount / total) * 100);
+
+                document.getElementById('final-score').innerText = `${this.score}`;
+                document.getElementById('final-correct').innerText = `${this.correctCount}/${total}`;
+                document.getElementById('final-streak').innerText = `🔥 ${this.maxStreak}`;
+
+                const rankBadge = document.getElementById('rank-badge');
+                const emoji = document.getElementById('completion-emoji');
+                const subtitle = document.getElementById('completion-subtitle');
+
+                if (scorePercent >= 90) {
+                    rankBadge.innerText = '🌟 SIÊU SAO TOÁN HỌC';
+                    rankBadge.className = 'inline-block px-4 py-1.5 rounded-full text-sm font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40';
+                    emoji.innerText = '🏆';
+                    subtitle.innerText = 'Xuất sắc! Em đã làm chủ hoàn toàn Bảng Nhân & Chia 6!';
+                } else if (scorePercent >= 70) {
+                    rankBadge.innerText = '🚀 NHÀ THÁM THIỂM TOÁN HỌC';
+                    rankBadge.className = 'inline-block px-4 py-1.5 rounded-full text-sm font-black uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-500/40';
+                    emoji.innerText = '🎉';
+                    subtitle.innerText = 'Rất tốt! Em tính nhẩm nhanh và chính xác lắm!';
+                } else if (scorePercent >= 50) {
+                    rankBadge.innerText = '🛡️ CHIẾN BINH TOÁN HỌC';
+                    rankBadge.className = 'inline-block px-4 py-1.5 rounded-full text-sm font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+                    emoji.innerText = '⭐';
+                    subtitle.innerText = 'Cố gắng lên nhé! Em đã hoàn thành thử thách rồi!';
+                } else {
+                    rankBadge.innerText = '💪 CÙNG LUYỆN THÊM NHÉ';
+                    rankBadge.className = 'inline-block px-4 py-1.5 rounded-full text-sm font-black uppercase tracking-wider bg-slate-700 text-slate-300 border border-slate-600';
+                    emoji.innerText = '🌱';
+                    subtitle.innerText = 'Hãy luyện tập thêm để thuộc làu Bảng 6 nhé!';
+                }
+
+                document.getElementById('modal-completion').classList.remove('hidden');
+            }
+
+            restartLevel() {
+                this.sound.playClick();
+                document.getElementById('modal-completion').classList.add('hidden');
+                this.resetQuizState();
+                this.prepareQuestions();
+                this.showQuizView();
+            }
+
+            openTeacherModal() {
+                this.sound.playClick();
+                
+                document.getElementById('teacher-total-answered').innerText = this.stats.totalAnswered;
+                document.getElementById('teacher-total-correct').innerText = this.stats.totalCorrect;
+                
+                const accuracy = this.stats.totalAnswered > 0 
+                    ? Math.round((this.stats.totalCorrect / this.stats.totalAnswered) * 100) 
+                    : 0;
+                document.getElementById('teacher-accuracy').innerText = `${accuracy}%`;
+
+                const levelText = this.currentLevel === 'medium' ? 'Trung Bình' : (this.currentLevel === 'hard' ? 'Khá' : (this.currentLevel === 'excellent' ? 'Giỏi' : 'Chưa chọn'));
+                document.getElementById('teacher-current-level').innerText = levelText;
+
+                document.getElementById('modal-teacher').classList.remove('hidden');
+            }
+
+            closeTeacherModal() {
+                this.sound.playClick();
+                document.getElementById('modal-teacher').classList.add('hidden');
+            }
+        }
+
+        /* ==========================================================================
+           4. GLOBAL APP INITIALIZATION
+           ========================================================================== */
+        let app;
+        window.addEventListener('DOMContentLoaded', () => {
+            app = new MathApp();
+        });
+    </script>
+</body>
+</html>
